@@ -11,28 +11,10 @@ pipeline {
             }
         }
         
-        stage('SonarCloud Analysis') {
-            steps {
-                echo '=========================================='
-                echo 'Stage 2: Running SonarCloud Analysis'
-                echo '=========================================='
-                withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
-                    bat '''
-                        sonar-scanner.bat ^
-                            -Dsonar.projectKey=SudhanshuKumar-4220_DevOps-Lab ^
-                            -Dsonar.organization=sudhanshukumar-4220 ^
-                            -Dsonar.sources=. ^
-                            -Dsonar.host.url=https://sonarcloud.io ^
-                            -Dsonar.login=%SONAR_TOKEN%
-                    '''
-                }
-            }
-        }
-        
         stage('Build Docker Images') {
             steps {
                 echo '=========================================='
-                echo 'Stage 3: Building Docker Images'
+                echo 'Stage 2: Building Docker Images'
                 echo '=========================================='
                 bat '''
                     cd DevOps-Lab
@@ -46,7 +28,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 echo '=========================================='
-                echo 'Stage 4: Pushing Images to Docker Hub'
+                echo 'Stage 3: Pushing Images to Docker Hub'
                 echo '=========================================='
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     bat '''
