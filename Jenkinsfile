@@ -1,14 +1,6 @@
 pipeline {
     agent any
     
-    environment {
-        DOCKER_REGISTRY = 'docker.io'
-        DOCKER_USERNAME = credentials('docker-hub-creds-username')
-        DOCKER_PASSWORD = credentials('docker-hub-creds-password')
-        SONARCLOUD_TOKEN = credentials('sonarcloud-token')
-        GIT_CREDENTIALS = credentials('github-credentials')
-    }
-    
     stages {
         stage('Checkout') {
             steps {
@@ -24,13 +16,14 @@ pipeline {
                 echo '=========================================='
                 echo 'Stage 2: Running SonarCloud Analysis'
                 echo '=========================================='
-                withSonarQubeEnv('SonarCloud') {
+                withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
                     bat '''
                         sonar-scanner.bat ^
                             -Dsonar.projectKey=SudhanshuKumar-4220_DevOps-Lab ^
                             -Dsonar.organization=sudhanshukumar-4220 ^
                             -Dsonar.sources=. ^
-                            -Dsonar.host.url=https://sonarcloud.io
+                            -Dsonar.host.url=https://sonarcloud.io ^
+                            -Dsonar.login=%SONAR_TOKEN%
                     '''
                 }
             }
